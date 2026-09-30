@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+n8n/.env
+ollama.log
+*.log

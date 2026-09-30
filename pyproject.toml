@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skill-quality-auditor"
+version = "0.1.0"
+description = "Audits Agent Skills for security and quality with plain-English reports."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+dependencies = [
+    "manifestspec>=0.1.0",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+skill-auditor = "auditor.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["auditor*"]

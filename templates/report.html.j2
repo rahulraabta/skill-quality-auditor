@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skill Audit Report</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: sans-serif; background: #f5f7fa; color: #1a202c; margin: 0; padding: 24px; }
+.container { max-width: 900px; margin: 0 auto; }
+h1 { margin: 0 0 4px; font-size: 24px; }
+.meta { color: #718096; font-size: 13px; margin-bottom: 24px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.card h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; color: #718096; }
+.card .value { font-size: 28px; font-weight: 700; }
+.card.ok .value { color: #38a169; }
+.card.warn .value { color: #d69e2e; }
+.card.bad .value { color: #e53e3e; }
+.section { background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.section h2 { margin: 0 0 12px; font-size: 16px; }
+.finding { border-left: 3px solid #cbd5e0; padding: 8px 12px; margin: 8px 0; background: #f7fafc; border-radius: 4px; font-size: 14px; }
+.finding.high { border-color: #e53e3e; }
+.finding.medium { border-color: #d69e2e; }
+.finding.low { border-color: #38a169; }
+.finding .loc { color: #718096; font-size: 12px; }
+.dims { font-size: 14px; }
+.dims div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #edf2f7; }
+.verdict { text-align: center; padding: 16px; border-radius: 8px; font-weight: 700; font-size: 18px; }
+.verdict.ok { background: #c6f6d5; color: #22543d; }
+.verdict.warn { background: #fefcbf; color: #744210; }
+.verdict.bad { background: #fed7d7; color: #742a2a; }
+.explain { margin-top: 6px; padding: 8px; background: #fffaf0; border-radius: 4px; font-size: 13px; line-height: 1.5; }
+.explain strong { color: #744210; }
+.summary-box { background: #ebf8ff; border-left: 4px solid #3182ce; padding: 16px 20px; border-radius: 6px; margin-bottom: 24px; }
+.summary-box h2 { margin: 0 0 8px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; color: #2c5282; }
+.summary-box p { margin: 6px 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Skill Quality Audit</h1>
+<div class="meta">{{ report.skill_path }} - {{ generated_at }}</div>
+
+<div class="summary-box">
+<h2>Summary</h2>
+<p>{{ summary.summary }}</p>
+<p><strong>Top fix:</strong> {{ summary.top_fix }}</p>
+</div>
+
+{% set sec = report.security %}
+{% set qual = report.quality %}
+{% set struct = report.structural %}
+<div class="grid">
+<div class="card {{ "ok" if struct.valid else "bad" }}">
+<h3>Structural</h3>
+<div class="value">{{ "Valid" if struct.valid else "Invalid" }}</div>
+</div>
+<div class="card {{ "ok" if sec.total == 0 else "bad" }}">
+<h3>Security</h3>
+<div class="value">{{ sec.total }} finding(s)</div>
+</div>
+<div class="card {{ "ok" if qual.total_score >= 80 else "warn" }}">
+<h3>Quality</h3>
+<div class="value">{{ qual.total_score }}/100</div>
+</div>
+</div>
+{% set struct_ok = struct.valid %}
+{% set sec_ok = sec.total == 0 or sec.recommendation != "DO_NOT_INSTALL" %}
+{% set qual_ok = qual.total_score >= 80 %}
+{% set vclass = "ok" if (struct_ok and sec_ok and qual_ok) else ("bad" if not sec_ok else "warn") %}
+{% set vtext = "SAFE TO USE" if (struct_ok and sec_ok and qual_ok) else ("DO NOT USE" if not sec_ok else "USE WITH CAUTION") %}
+<div class="verdict {{ vclass }}">{{ vtext }}</div>
+
+<div class="section">
+<h2>Structural</h2>
+{% for e in struct.errors %}
+<div class="finding high">[{{ e.code }}] {{ e.message }}</div>
+{% endfor %}
+{% for w in struct.warnings %}
+<div class="finding medium">[{{ w.code }}] {{ w.message }}</div>
+{% endfor %}
+</div>
+<div class="section">
+<h2>Security</h2>
+<p><strong>Recommendation:</strong> {{ sec.recommendation }} | <strong>Risk:</strong> {{ sec.risk_severity }} ({{ sec.risk_score }})</p>
+{% for f in sec.findings %}
+<div class="finding {{ f.severity }}">
+<strong>[{{ f.rule_id }}] {{ f.message }}</strong>
+<div class="loc">{{ f.location }} - {{ f.category }}</div>
+<div class="explain"><strong>{{ f.explanation.title }}</strong><br>{{ f.explanation.risk }}<br><em>Action: {{ f.explanation.action }}</em></div>
+</div>
+{% endfor %}
+</div>
+<div class="section">
+<h2>Quality - {{ qual.verdict }}</h2>
+<div class="dims">
+{% for dim, score in qual.dimensions.items() %}
+<div><span>{{ dim.replace("_", " ").title() }}</span><strong>{{ score }}</strong></div>
+{% endfor %}
+</div>
+</div>
+
+</div>
+</body>
+</html>
