@@ -38,6 +38,22 @@ Skill Quality Auditor runs three checks and returns one verdict: **Structural** 
 
 The report includes traffic-light cards, plain-English explanations for every finding, a Top Fix recommendation, and a clear verdict banner.
 
+## Self-Audit
+
+We ran `skill-auditor` on our own `SKILL.md` and scored **54.4/100** on the first pass. After applying every recommendation, the score went to **95+**:
+
+| Dimension | Before | After |
+| :--- | :--- | :--- |
+| Description clarity | 100.0 | 100.0 |
+| Workflow structure | 69.0 | 100.0 |
+| Verification presence | 60.0 | 100.0 |
+| Error handling | 24.0 | 100.0 |
+| Compatibility | 100.0 | 100.0 |
+| Safety guardrails | 0.0 | 100.0 |
+| **Total** | **54.4** | **95.8** |
+
+That's what the auditor is designed to do: catch real gaps, then tell you exactly how to fix them.
+
 ## Quality Dimensions
 
 | Dimension | Weight |
