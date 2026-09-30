@@ -1,14 +1,22 @@
 # Skill Quality Auditor
 
-Audit any Agent Skill for security, structure, and user-facing quality with plain-English explanations.
+> Audit AI Agent Skills for **security**, **structure**, and **user-facing quality** - with plain-English reports.
 
-## What It Checks
+[![Tests](https://img.shields.io/badge/tests-8%20passing-brightgreen)]()
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)]()
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)]()
 
-| Layer | Tool | What It Finds |
-| :--- | :--- | :--- |
-| Structural | manifestspec | Missing sections, bad frontmatter |
-| Security | NVIDIA SkillSpector v2.12.0 | 71+ vulnerability patterns |
-| Quality | Custom 6-dimension scorer | Clarity, workflow, verification, safety |
+![Dashboard](docs/screenshot-top.png)
+
+---
+
+## The Problem
+
+The AI Agent ecosystem is exploding with thousands of Skills, but there is no way for a non-technical user to know if one is safe or well-built. Existing tools output cryptic codes like CRED-002 that mean nothing to someone who just wants to know: *Should I install this?*
+
+## The Solution
+
+Skill Quality Auditor runs three checks and returns one verdict: **Structural** (manifestspec), **Security** (SkillSpector), and **Quality** (custom 6-dimension scorer). It then translates every finding into plain English and shows a visual dashboard with a single Top Fix recommendation.
 
 ## Quick Start
 
@@ -18,13 +26,17 @@ Audit any Agent Skill for security, structure, and user-facing quality with plai
 ## Example Output
 
     STRUCTURAL: valid
-    SECURITY: 0 findings (Risk: LOW)
-    QUALITY: 84.3/100 (SAFE TO USE)
-    OVERALL: SAFE TO USE
+    SECURITY: 10 finding(s) - DO_NOT_INSTALL - Risk: CRITICAL
+    QUALITY: 31.2/100 - DO NOT USE
+    OVERALL: DO NOT USE
 
-## JSON Output
+## HTML Report
 
-    skill-auditor path/to/skill-folder --json
+    skill-auditor path/to/skill-folder --html report.html
+
+![Full report](docs/screenshot-full.png)
+
+The report includes traffic-light cards, plain-English explanations for every finding, a Top Fix recommendation, and a clear verdict banner.
 
 ## Quality Dimensions
 
@@ -39,9 +51,11 @@ Audit any Agent Skill for security, structure, and user-facing quality with plai
 
 ## Verdicts
 
-- SAFE TO USE: valid structure, no critical findings, quality 80 or higher
-- USE WITH CAUTION: minor issues present
-- DO NOT USE: critical security or structural problems
+| Verdict | Meaning |
+| :--- | :--- |
+| SAFE TO USE | Valid structure, no critical issues, quality 80+ |
+| USE WITH CAUTION | Minor issues present |
+| DO NOT USE | Critical security or structural problems |
 
 ## Development
 
@@ -50,8 +64,8 @@ Audit any Agent Skill for security, structure, and user-facing quality with plai
 
 ## License
 
-Apache-2.0 -- see LICENSE.
+Apache-2.0 - see LICENSE.
 
 ## Disclaimer
 
-This tool performs best-effort static analysis. It cannot detect all security vulnerabilities or quality issues. A clean audit does not guarantee a skill is safe. Always review third-party skills before installing.
+This tool performs best-effort static analysis. It cannot detect all vulnerabilities. A clean audit does not guarantee a skill is safe. Always review third-party skills before installing.
